@@ -50,7 +50,7 @@ export const light = {
       shadow: "rgba(72, 84, 159, 0.25)",
     },
     checkbox: {
-      bg: "#dfe3fa",
+      text: "#dfe3fa",
     },
     text: {
       heading: "#0C0E16",
@@ -69,6 +69,10 @@ export const light = {
     },
     modalBtn: {
       bg: "rgb(249, 250, 254)",
+    },
+    calendar: {
+      bg: "#0C0E16",
+      disabled: "#DFE3FA",
     },
   },
   icon: {
@@ -129,7 +133,7 @@ export const dark = {
       shadow: "rgba(0, 0, 0, 0.25)",
     },
     checkbox: {
-      bg: "#1e2139",
+      bg: "#1E2139",
     },
     text: {
       heading: "#ffffff",
@@ -148,7 +152,10 @@ export const dark = {
     },
     modalBtn: {
       cancel: "rgb(37, 41, 69)",
-      
+    },
+    calendar: {
+      text: "#DFE3FA",
+      disabled: "#888EB0",
     },
   },
   icon: {

@@ -109,6 +109,7 @@ const Input = styled.input`
   background: none;
   outline: none;
   border: none;
+  color: ${(props) => props.theme.color.text.heading};
 
   &[type="number"] {
     -moz-appearance: textfield;
@@ -121,7 +122,7 @@ const Input = styled.input`
 `;
 
 const Label = styled.label`
-  font-size: 1rem;
+  font-size: .85rem;
   text-transform: capitalize;
   color: ${(props) => props.theme.color.text.formLabel};
 `;

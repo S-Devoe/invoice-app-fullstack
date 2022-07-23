@@ -7,6 +7,8 @@ import Button from "./Button";
 import useMyContext from "../hooks/useContext";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import useAuthContext from "../hooks/AuthContext";
+
 
 export interface themeMode {
   toggleTheme: () => void;
@@ -14,6 +16,7 @@ export interface themeMode {
 
 const Sidebar = ({ toggleTheme }: themeMode) => {
   const { setShowLogoutModal } = useMyContext();
+  const {currentUser} = useAuthContext()
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ const Sidebar = ({ toggleTheme }: themeMode) => {
         <Divider />
 
         {/* profile image  */}
-        {auth.currentUser !==  null && (
+        {currentUser && (
           <Button
             className="remove-bg"
             onClick={() => setShowLogoutModal(true)}

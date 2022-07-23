@@ -1,6 +1,7 @@
+import { AnyARecord } from "dns";
 import styled from "styled-components";
 interface ButtonProps {
-  children?: string;
+  children?: any;
   className?: string;
   type?: "submit" | "button" | undefined;
   icon?: any;
@@ -15,20 +16,20 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <ButtonContainer className={className} type={type} onClick={onClick}>
+      <span>{icon}</span>
       {children}
-      {icon}
     </ButtonContainer>
   );
 };
 export default Button;
 
 const ButtonContainer = styled.button`
-font-family: 'Spartan', sans-serif;
+  font-family: "Spartan", sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   padding: 0.5rem 2rem;
   border: none;
   outline: none;
-  transition: background .3s linear;
+  transition: background 0.3s linear;
   cursor: pointer;
 `;

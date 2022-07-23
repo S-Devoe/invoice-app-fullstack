@@ -13,9 +13,13 @@ import FormInputs from "../components/FormInputs";
 import FormTitle from "../components/FormTitle";
 import AuthenticationContainer from "../components/AuthenticationContainer";
 import InputErrorMessage from "../components/InputErrorMessage";
+import useMyContext from "../hooks/useContext";
+import useAuthContext from "../hooks/AuthContext";
 
 const Login = () => {
   const auth = getAuth();
+  const { setLoggedIn } = useMyContext();
+  const {dispatch} = useAuthContext()
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
@@ -40,7 +44,17 @@ const Login = () => {
             auth,
             formInput.email,
             formInput.password
-          );
+          ).then((userCredential) => {
+            const user = userCredential;
+             setLoggedIn(true);
+            console.log(user);
+            dispatch({
+              type:"LOGIN",
+              payload: user
+            })
+
+
+          });
 
       await setPersistence(auth, browserLocalPersistence);
       navigate("/invoices");
@@ -95,9 +109,7 @@ const Login = () => {
               spellcheck={false}
               displayEye={true}
             />
-            {
-              error && <InputErrorMessage>{error}</InputErrorMessage>
-            }
+            {error && <InputErrorMessage>{error}</InputErrorMessage>}
             <CenterButton>
               <Button
                 className="button-violet"
@@ -121,7 +133,7 @@ const Login = () => {
           </ForgetPassword>
           <AnonymousLogin className="anonymous_login">
             <p>
-              You can also{" "}
+              You can also
               <Link to="/invoices"> login with an anonymous account </Link> in
               order to quickly test the application.
             </p>
