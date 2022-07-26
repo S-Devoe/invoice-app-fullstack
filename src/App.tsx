@@ -53,7 +53,7 @@ function App() {
 
       if (loggedIn) {
         if (auth?.currentUser?.email) {
-          console.log(auth.currentUser.email);
+          // console.log(auth.currentUser.email);
           const storeInvoices: any = await getInvoices(auth.currentUser?.email);
           if (storeInvoices) return setInvoices(storeInvoices);
         }
@@ -84,7 +84,7 @@ function App() {
   }, [invoices, setLoggedIn]);
 
   const RequireAuth = ({ children }: any) => {
-    return loggedIn ? children : <Navigate to="/login" />;
+    return currentUser || loggedIn ? children : <Navigate to="/login" />;
   };
 
   const logout = () => {

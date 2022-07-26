@@ -19,7 +19,7 @@ import useAuthContext from "../hooks/AuthContext";
 const Login = () => {
   const auth = getAuth();
   const { setLoggedIn } = useMyContext();
-  const {dispatch} = useAuthContext()
+  const { dispatch } = useAuthContext();
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
@@ -46,14 +46,12 @@ const Login = () => {
             formInput.password
           ).then((userCredential) => {
             const user = userCredential;
-             setLoggedIn(true);
-            console.log(user);
+            setLoggedIn(true);
+            // console.log(user);
             dispatch({
-              type:"LOGIN",
-              payload: user
-            })
-
-
+              type: "LOGIN",
+              payload: user,
+            });
           });
 
       await setPersistence(auth, browserLocalPersistence);
@@ -134,8 +132,11 @@ const Login = () => {
           <AnonymousLogin className="anonymous_login">
             <p>
               You can also
-              <span onClick={(e) => handleSubmit(e, true)}> login with an anonymous account </span> in
-              order to quickly test the application.
+              <span onClick={(e) => handleSubmit(e, true)}>
+                {" "}
+                login with an anonymous account{" "}
+              </span>{" "}
+              in order to quickly test the application.
             </p>
           </AnonymousLogin>
         </div>
@@ -175,7 +176,6 @@ const NewUser = styled.div`
   color: ${(props) => props.theme.color.text.heading};
   a {
     color: ${(props) => props.theme.color.text.link};
-    
 
     &:hover {
       color: ${(props) => props.theme.color.text.linkHover};
@@ -206,6 +206,8 @@ const AnonymousLogin = styled.div`
   span {
     color: ${(props) => props.theme.color.text.bodyA};
     text-decoration: underline;
+    cursor: pointer;
+    
     &:hover {
       color: ${(props) => props.theme.color.text.heading};
     }
