@@ -6,6 +6,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import styled from "styled-components";
+import data from "./data/data.json";
 import Invoice from "./pages/Invoice";
 import Invoices from "./pages/Invoices";
 import Login from "./pages/Login";
@@ -32,8 +33,14 @@ import InvoiceForm from "./components/InvoiceForm";
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { showLogoutModal, setShowLogoutModal, loggedIn, setLoggedIn,showForm, setShowForm } =
-    useMyContext();
+  const {
+    showLogoutModal,
+    setShowLogoutModal,
+    loggedIn,
+    setLoggedIn,
+    showForm,
+    setShowForm,
+  } = useMyContext();
   const { currentUser, dispatch } = useAuthContext();
   const [invoiceFormData, setInvoiceFormData] =
     useState<InvoicesExtended | null>(null);
@@ -42,6 +49,8 @@ function App() {
 
   useEffect(() => {
     const getInvoiceFunction = async () => {
+      if (anonymousUser) return setInvoices(data as InvoicesExtended[]);
+
       if (loggedIn) {
         if (auth?.currentUser?.email) {
           console.log(auth.currentUser.email);
@@ -51,14 +60,22 @@ function App() {
       }
     };
     getInvoiceFunction();
-  }, [loggedIn]);
+  }, [loggedIn, anonymousUser]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
+      // console.log(auth);
+      if (currentUser?.isAnonymous) {
+        setLoggedIn(true)
+        setAnonymousUser(true);
+      } else {
+        setAnonymousUser(false);
+        setLoggedIn(false)
+      }
       //currentUser here is from firebase not fom the context
       if (currentUser) {
-        console.log(auth.currentUser);
-        console.log(invoices);
+        // console.log(auth.currentUser);
+        // console.log(invoices);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
@@ -67,7 +84,7 @@ function App() {
   }, [invoices, setLoggedIn]);
 
   const RequireAuth = ({ children }: any) => {
-    return currentUser ? children : <Navigate to="/login" />;
+    return loggedIn ? children : <Navigate to="/login" />;
   };
 
   const logout = () => {
@@ -85,9 +102,8 @@ function App() {
 
     const invoice = invoices?.find((invoice) => invoice.id === id);
     if (!invoice) throw Error("No invoice found");
-    setShowForm(true)
+    setShowForm(true);
     return setInvoiceFormData(invoice);
-
   };
 
   const newInvoice = async (data: InvoicesExtended) => {
@@ -116,19 +132,18 @@ function App() {
       if (!invoices) throw Error("No invoices found");
 
       setInvoices(firestoreInvoices);
-    } 
+    }
   };
 
-   const showFormToEdit = (id?: string) => {
+  const showFormToEdit = (id?: string) => {
+    setShowForm(true);
 
-     setShowForm(true);
+    if (!id) return setInvoiceFormData(null);
 
-     if (!id) return setInvoiceFormData(null);
-
-     const invoice = invoices?.find((invoice) => invoice.id === id);
-     if (!invoice) throw Error("No invoice found");
-     return setInvoiceFormData(invoice);
-   };
+    const invoice = invoices?.find((invoice) => invoice.id === id);
+    if (!invoice) throw Error("No invoice found");
+    return setInvoiceFormData(invoice);
+  };
 
   const deleteInvoice = async (id: string) => {
     const newInvoiceArray = invoices?.filter((invoice) => invoice.id !== id);
@@ -177,7 +192,7 @@ function App() {
       if (!newArray) throw Error("Trying to map a null state");
 
       setInvoices(newArray);
-      setShowForm(false)
+      setShowForm(false);
     }
   };
 
@@ -231,11 +246,7 @@ function App() {
             path="invoices"
             element={
               <RequireAuth>
-                {invoices && (
-                  <Invoices
-                    invoices={invoices}
-                  />
-                )}
+                {invoices && <Invoices invoices={invoices} />}
               </RequireAuth>
             }
           />

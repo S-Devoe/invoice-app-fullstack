@@ -134,7 +134,7 @@ const Login = () => {
           <AnonymousLogin className="anonymous_login">
             <p>
               You can also
-              <Link to="/invoices"> login with an anonymous account </Link> in
+              <span onClick={(e) => handleSubmit(e, true)}> login with an anonymous account </span> in
               order to quickly test the application.
             </p>
           </AnonymousLogin>
@@ -175,6 +175,7 @@ const NewUser = styled.div`
   color: ${(props) => props.theme.color.text.heading};
   a {
     color: ${(props) => props.theme.color.text.link};
+    
 
     &:hover {
       color: ${(props) => props.theme.color.text.linkHover};
@@ -202,9 +203,9 @@ const AnonymousLogin = styled.div`
   padding: 0 3rem;
   color: ${(props) => props.theme.color.text.bodyA};
 
-  a {
+  span {
     color: ${(props) => props.theme.color.text.bodyA};
-
+    text-decoration: underline;
     &:hover {
       color: ${(props) => props.theme.color.text.heading};
     }

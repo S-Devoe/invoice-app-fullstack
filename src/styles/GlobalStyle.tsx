@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        transition: all .25s cubic-bezier(0.23, 1, 0.320, 1);
+        transition: all .25s linear;
         font-family: 'Spartan', sans-serif;
         
     }

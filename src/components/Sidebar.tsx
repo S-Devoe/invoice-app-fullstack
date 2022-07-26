@@ -14,7 +14,7 @@ export interface themeMode {
 }
 
 const Sidebar = ({ toggleTheme }: themeMode) => {
-  const { setShowLogoutModal, setLoggedIn } = useMyContext();
+  const { setShowLogoutModal, setLoggedIn, loggedIn } = useMyContext();
   const { currentUser } = useAuthContext();
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Sidebar = ({ toggleTheme }: themeMode) => {
         <Divider />
 
         {/* profile image  */}
-        {currentUser && (
+        {loggedIn   && (
           <Button
             className="remove-bg"
             onClick={() => setShowLogoutModal(true)}

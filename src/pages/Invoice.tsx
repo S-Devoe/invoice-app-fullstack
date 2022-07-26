@@ -194,8 +194,8 @@ const Invoice: React.FC<Props> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {invoice.items.map((item) => (
-                    <tr>
+                  {invoice.items.map((item, index) => (
+                    <tr key={index}>
                       <td className="item-name">{item.name}</td>
                       <td className="item-quantity">{item.quantity}</td>
                       <td className="item-price">${addComma(item.price)}</td>
@@ -209,15 +209,17 @@ const Invoice: React.FC<Props> = ({
             </InvoiceTableDesktop>
             <InvoiceTableMobile>
               <table>
-                {invoice.items.map((item) => (
-                  <tr>
-                    <td className="item-name">{item.name}</td>
+                <tbody>
+                  {invoice.items.map((item) => (
+                    <tr>
+                      <td className="item-name">{item.name}</td>
 
-                    <td className="item-total">
-                      ${addComma(item.quantity * item.price)}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="item-total">
+                        ${addComma(item.quantity * item.price)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </InvoiceTableMobile>
             <Amount>
@@ -481,15 +483,15 @@ const Status = styled.div`
   width: 100%;
   justify-content: space-between;
 
+  p {
+    color: ${(props) => props.theme.color.text.bodyA};
+    font-size: 0.95rem;
+    line-height: 1.1;
+  }
+
   @media screen and (min-width: 768px) {
     justify-content: unset;
     gap: 1rem;
-
-    p {
-      color: ${(props) => props.theme.color.text.bodyA};
-      font-size: 0.95rem;
-      line-height: 1.1;
-    }
   }
 `;
 
