@@ -7,6 +7,9 @@ const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        transition: all .25s cubic-bezier(0.23, 1, 0.320, 1);
+        font-family: 'Spartan', sans-serif;
+        
     }
 
     html {
@@ -22,6 +25,11 @@ const GlobalStyles = createGlobalStyle`
         transition: background .3s;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
+        
+    }
+    
+    a{
+        text-decoration: none;
     }
 `;
 export default GlobalStyles;

@@ -27,11 +27,13 @@ import {
 } from "./firebase/invoiceCollections";
 import { Invoice as InvoicesExtended, InvoiceStatus } from "./Types/invoice";
 import useAuthContext from "./hooks/AuthContext";
+import InvoiceForm from "./components/InvoiceForm";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { showLogoutModal, setShowLogoutModal } = useMyContext();
+  const { showLogoutModal, setShowLogoutModal, loggedIn, setLoggedIn,showForm, setShowForm } =
+    useMyContext();
   const { currentUser, dispatch } = useAuthContext();
   const [invoiceFormData, setInvoiceFormData] =
     useState<InvoicesExtended | null>(null);
@@ -39,33 +41,34 @@ function App() {
   const [anonymousUser, setAnonymousUser] = useState<boolean | null>(null);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      //currentUser here is from firebase not fom the context
-      if (currentUser) {
-        console.log(auth.currentUser);
-        // console.log(invoices);
-      } else {
-        console.log(auth.currentUser);
-      }
-    });
-  }, [invoices]);
-
-  const RequireAuth = ({ children }: any) => {
-    return currentUser ? children : <Navigate to="/login" />;
-  };
-
-  useEffect(() => {
     const getInvoiceFunction = async () => {
-      if (currentUser) {
+      if (loggedIn) {
         if (auth?.currentUser?.email) {
           console.log(auth.currentUser.email);
-          const storeInvoices = await getInvoices(auth.currentUser.email);
+          const storeInvoices: any = await getInvoices(auth.currentUser?.email);
           if (storeInvoices) return setInvoices(storeInvoices);
         }
       }
     };
     getInvoiceFunction();
-  }, [currentUser]);
+  }, [loggedIn]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      //currentUser here is from firebase not fom the context
+      if (currentUser) {
+        console.log(auth.currentUser);
+        console.log(invoices);
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+      }
+    });
+  }, [invoices, setLoggedIn]);
+
+  const RequireAuth = ({ children }: any) => {
+    return currentUser ? children : <Navigate to="/login" />;
+  };
 
   const logout = () => {
     signOut(auth);
@@ -82,7 +85,9 @@ function App() {
 
     const invoice = invoices?.find((invoice) => invoice.id === id);
     if (!invoice) throw Error("No invoice found");
+    setShowForm(true)
     return setInvoiceFormData(invoice);
+
   };
 
   const newInvoice = async (data: InvoicesExtended) => {
@@ -93,7 +98,7 @@ function App() {
       });
       if (!auth?.currentUser?.email) throw Error("No user found");
 
-      const invoices = await getInvoices(auth.currentUser.email);
+      const invoices: any = await getInvoices(auth.currentUser.email);
 
       if (invoices) setInvoices(invoices);
     }
@@ -105,12 +110,25 @@ function App() {
 
     if (currentUser) {
       if (!auth?.currentUser?.email) throw Error("No user found");
-      const firestoreInvoices = await getInvoices(auth?.currentUser?.email);
+      const firestoreInvoices: any = await getInvoices(
+        auth?.currentUser?.email
+      );
       if (!invoices) throw Error("No invoices found");
 
       setInvoices(firestoreInvoices);
-    }
+    } 
   };
+
+   const showFormToEdit = (id?: string) => {
+
+     setShowForm(true);
+
+     if (!id) return setInvoiceFormData(null);
+
+     const invoice = invoices?.find((invoice) => invoice.id === id);
+     if (!invoice) throw Error("No invoice found");
+     return setInvoiceFormData(invoice);
+   };
 
   const deleteInvoice = async (id: string) => {
     const newInvoiceArray = invoices?.filter((invoice) => invoice.id !== id);
@@ -143,7 +161,9 @@ function App() {
       });
 
       if (!auth?.currentUser?.email) throw Error("No user found");
-      const firestoreInvoices = await getInvoices(auth?.currentUser?.email);
+      const firestoreInvoices: any = await getInvoices(
+        auth?.currentUser?.email
+      );
       if (!invoices) throw Error("No invoices found");
 
       setInvoices(firestoreInvoices);
@@ -157,6 +177,7 @@ function App() {
       if (!newArray) throw Error("Trying to map a null state");
 
       setInvoices(newArray);
+      setShowForm(false)
     }
   };
 
@@ -174,6 +195,16 @@ function App() {
               cancel={() => setShowLogoutModal(false)}
             />
           </OverLay>
+        )}
+
+        {showForm && (
+          <InvoiceForm
+            invoices={invoices}
+            invoiceFormData={invoiceFormData}
+            setInvoiceFormData={setInvoiceFormData}
+            newInvoice={(data: InvoicesExtended) => newInvoice(data)}
+            editInvoice={(data: InvoicesExtended) => editInvoice(data)}
+          />
         )}
       </AnimatePresence>
 
@@ -200,16 +231,26 @@ function App() {
             path="invoices"
             element={
               <RequireAuth>
-                {
+                {invoices && (
                   <Invoices
                     invoices={invoices}
-                    invoiceFormData={invoiceFormData}
                   />
-                }
+                )}
               </RequireAuth>
             }
           />
-          <Route path="invoices/:id" element={<Invoice />} />
+          <Route
+            path="invoices/:id"
+            element={
+              <Invoice
+                invoices={invoices}
+                markAsPaid={(id: string) => markAsPaid(id)}
+                deleteInvoice={(id: string) => deleteInvoice(id)}
+                showInvoiceForm={(id: string) => showInvoiceForm(id)}
+                showFormToEdit={(id: string) => showFormToEdit(id)}
+              />
+            }
+          />
           <Route
             path="*"
             element={
@@ -244,7 +285,7 @@ const AppContainer = styled.section`
 
     .wrapper {
       width: 100%;
-      max-width: 40rem;
+      max-width: 55rem;
     }
   }
 `;

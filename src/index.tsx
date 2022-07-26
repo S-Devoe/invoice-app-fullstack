@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
+  
     <AuthContextProvider>
       <ContextProvider>
         <Layout>
@@ -21,5 +21,5 @@ root.render(
         </Layout>
       </ContextProvider>
     </AuthContextProvider>
-  </React.StrictMode>
+  
 );

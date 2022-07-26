@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import {BsEye} from "react-icons/bs";
 import {BsEyeSlash} from "react-icons/bs";
 
@@ -40,14 +40,14 @@ const FormInputs: React.FC<FormTypes> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <FormInput>
-      <Label htmlFor={id}>
+    <FormInput showError={showError}>
+      <Label htmlFor={id} style={{ color: showError ? "#EC5757" : "default" }}>
         {label}
-        <div className="error">{showError && <p>{showError}</p>}</div>
       </Label>
       <div className="input-class">
         <Input
           id={id}
+          showError={showError}
           name={name}
           type={showPassword ? "text" : type}
           placeholder={placeholder}
@@ -81,12 +81,17 @@ const FormInputs: React.FC<FormTypes> = ({
 };
 export default FormInputs;
 
-const FormInput = styled.div`
+
+interface InputProps {
+  showError: boolean | undefined;
+}
+
+const FormInput = styled.div<InputProps>`
   position: relative;
 
   .input-class {
     display: flex;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     margin-bottom: 1.5rem;
     width: 100%;
     padding: 1rem 0.89rem;
@@ -99,10 +104,17 @@ const FormInput = styled.div`
     :hover {
       border: 1px solid ${(props) => props.theme.color.input.focus};
     }
+
+    ${({ showError }) =>
+      showError &&
+      css`
+        border: 1px solid #ec5757;
+      `}
   }
 `;
 
-const Input = styled.input`
+
+const Input = styled.input<InputProps>`
   font-family: "Spartan", sans-serif;
   font-weight: 500;
   width: 100%;
@@ -114,6 +126,9 @@ const Input = styled.input`
   &[type="number"] {
     -moz-appearance: textfield;
   }
+
+
+
   &::placeholder {
     font-family: "Spartan", sans-serif;
     font-weight: 500;

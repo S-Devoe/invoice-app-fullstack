@@ -1,4 +1,12 @@
 export type InvoiceStatus = "paid" | "pending" | "draft" | "editDraft" | "";
+
+export interface CheckedStatus {
+  id: number;
+  text: string;
+  name: "paid" | "pending" | "draft";
+  checked: boolean;
+}
+
 export type PaymentTerms = 1 | 7 | 14 | 30;
 export interface Invoice {
   id: string;

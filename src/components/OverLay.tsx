@@ -25,11 +25,12 @@ const OverLayContainer = styled.section`
   width: 100%;
   height: 100%;
   top: 0;
-  /* left: 0; */
+  left: 0;
   /* right: 0; */
   /* margin-left: auto; */
   /* margin-right: auto; */
   position: absolute;
+  z-index: 999;
 `;
 
 const CenterContent = styled.div`
@@ -39,4 +40,11 @@ const CenterContent = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  @media screen and (min-width: 1000px) {
+    left: 4%;
+  }
+`;

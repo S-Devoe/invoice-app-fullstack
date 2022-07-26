@@ -1,13 +1,14 @@
+
 import {
   collection,
   getDocs,
   query,
   where,
   doc,
-  addDoc,
   deleteDoc,
   orderBy,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 import { Invoice } from "../Types/invoice";
 
@@ -26,9 +27,9 @@ export const getInvoices = async (email: string | null) => {
     )
   );
 
-  const invoicesList = invoiceSnapshot.docs.map((doc) => ({
+  return invoiceSnapshot.docs.map((doc) => ({
     // spread all the data from firebase (as Invoice is to make sure everything is the same as the Types )
-    ...(doc.data() as Invoice),
+    ...doc.data(),
 
     // this is to make the document Id(on Firebase) the Id I will be using here
     documentId: doc.id,
@@ -36,14 +37,15 @@ export const getInvoices = async (email: string | null) => {
     // get the timestamp from firebase and use it here
     timestamp: doc.data().timestamp.toDate(),
   }));
+  
 
-  return invoicesList;
+  
 };
 
 export const addInvoice = async (data: Invoice) => {
-  const invoicesCollection = collection(db, "invoices");
+  const invoicesCollection = doc(db, "invoices", data.id);
 
-  await addDoc(invoicesCollection, data);
+  await setDoc(invoicesCollection, data);
 };
 
 export const editInvoice = async (data: any) => {

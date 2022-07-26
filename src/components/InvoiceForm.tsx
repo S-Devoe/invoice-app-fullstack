@@ -10,13 +10,14 @@ import OverLay from "./OverLay";
 import useMyContext from "../hooks/useContext";
 import CalendarComp from "./CalendarComp";
 import { AnimatePresence, motion } from "framer-motion";
-import Button from "./Button";
+import InputErrorMessage from "./InputErrorMessage";
 
 interface Props {
   invoices: Invoice[];
-  newInvoice?: (data: Invoice) => void;
-  editInvoice?: (data: Invoice) => void;
+  newInvoice: (data: Invoice) => void;
+  editInvoice: (data: Invoice) => void;
   invoiceFormData: Invoice | null;
+  setInvoiceFormData: (value: any) => void;
 }
 
 const InvoiceForm: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const InvoiceForm: React.FC<Props> = ({
   newInvoice,
   editInvoice,
   invoiceFormData,
+  setInvoiceFormData,
 }) => {
   const { setShowForm } = useMyContext();
   const paymentTermsValues = [1, 7, 14, 30];
@@ -36,12 +38,8 @@ const InvoiceForm: React.FC<Props> = ({
   const [fieldIsEmpty, setFieldIsEmpty] = useState(false);
   const [showClientEmailError, setShowClientEmailError] = useState(false);
 
-  const dateButtonLabel = useRef<HTMLDivElement | null>(null);
   const dateButton = useRef<HTMLButtonElement | null>(null);
   const calendar = useRef<HTMLInputElement | null>(null);
-  const paymentTermsButton = useRef<HTMLButtonElement | null>(null);
-  const paymentTermsDropdown = useRef<HTMLDivElement | null>(null);
-  const paymentTermsLabel = useRef<HTMLLabelElement | null>(null);
 
   const [paymentTerm, setPaymentTerm] = useState<PaymentTerms>(30);
   const [formData, setFormData] = useState<Invoice>({
@@ -130,7 +128,7 @@ const InvoiceForm: React.FC<Props> = ({
 
     setPaymentDropdown(false);
   };
-
+  // for adding more items to the list
   const addItem = () => {
     setFormData({
       ...formData,
@@ -145,6 +143,7 @@ const InvoiceForm: React.FC<Props> = ({
     });
   };
 
+  // for sending the item
   const setItem = (e: any, index: number) => {
     const target = e.target;
 
@@ -161,21 +160,12 @@ const InvoiceForm: React.FC<Props> = ({
     });
   };
 
+  // for removing or deleting an item
   const removeItem = (index: number) => {
     setFormData({
       ...formData,
       items: formData.items.filter((item, itemIndex) => itemIndex !== index),
     });
-  };
-
-  const focusDateButton = () => {
-    dateButton.current?.focus();
-    if (!showCalendar) setShowCalendar(true);
-  };
-
-  const focusPaymentButton = () => {
-    paymentTermsButton.current?.focus();
-    if (!paymentDropdown) setPaymentDropdown((prev) => !prev);
   };
 
   const setSenderAddress = (e: any) => {
@@ -195,7 +185,10 @@ const InvoiceForm: React.FC<Props> = ({
 
     setFormData((formData) => ({
       ...formData,
-      [target.name]: target.value,
+      clientAddress: {
+        ...formData.clientAddress,
+        [target.name]: target.value,
+      },
     }));
   };
 
@@ -308,56 +301,58 @@ const InvoiceForm: React.FC<Props> = ({
     return formIsValid;
   };
 
-  // const handleSubmit = (
-  //   e: any,
-  //   operation: "draft" | "edit" | "create" | "editDraft"
-  // ) => {
-  //   e.preventDefault();
+  const handleSubmit = (
+    e: any,
+    operation: "draft" | "edit" | "create" | "editDraft"
+  ) => {
+    e.preventDefault();
 
-  //   const total = parseFloat(
-  //     formData.items
-  //       .map((item) => item.price * item.quantity)
-  //       .reduce((prev, curr) => prev + curr, 0)
-  //       .toFixed(2)
-  //   );
+    const total = parseFloat(
+      formData.items
+        .map((item) => item.price * item.quantity)
+        .reduce((prev, curr) => prev + curr, 0)
+        .toFixed(2)
+    );
 
-  //   if (operation === "draft") {
-  //     newInvoice({
-  //       ...formData,
-  //       status: "draft",
-  //       total: total,
-  //     });
-  //   }
+    if (operation === "draft") {
+      newInvoice({
+        ...formData,
+        status: "draft",
+        total: total,
+      });
+    }
 
-  //   if (operation === "editDraft") {
-  //     editInvoice({
-  //       ...formData,
-  //       status: "draft",
-  //     });
-  //   }
+    if (operation === "editDraft") {
+      editInvoice({
+        ...formData,
+        status: "draft",
+      });
+    }
 
-  //   if (operation === "edit") {
-  //     const isFormValid = validateForm();
-  //     if (!isFormValid) return;
+    if (operation === "edit") {
+      const isFormValid = validateForm();
+      if (!isFormValid) return;
 
-  //     editInvoice({
-  //       ...formData,
-  //       total: total,
-  //       status: "pending",
-  //     });
-  //   }
+      editInvoice({
+        ...formData,
+        total: total,
+        status: "pending",
+      });
+    }
 
-  //   if (operation === "create") {
-  //     const isFormValid = validateForm();
-  //     if (!isFormValid) return;
+    if (operation === "create") {
+      const isFormValid = validateForm();
+      if (!isFormValid) return;
 
-  //     newInvoice({
-  //       ...formData,
-  //       status: "pending",
-  //       total,
-  //     });
-  //   }
-  // };
+      newInvoice({
+        ...formData,
+        status: "pending",
+        total,
+      });
+    }
+
+    setShowForm(false);
+  };
 
   const handleInputChange = (e: any) => {
     const target = e.target;
@@ -368,14 +363,21 @@ const InvoiceForm: React.FC<Props> = ({
     }));
   };
 
+  const closeForm = () => {
+    setShowForm(false);
+
+    // to clear any existing value in the form
+    setInvoiceFormData(null);
+  };
+
   return (
     <OverLay>
       <FormContainer
         as={motion.section}
         initial={{ x: "-100%", opacity: 0 }}
         animate={{ x: "0", opacity: 1 }}
-        exit={{ x: "100%", opacity: 0 }}
-        transition={{ duration: 0.25, type: "tween" }}
+        exit={{ x: "-100%", opacity: 0 }}
+        transition={{ duration: 0.65, type: "spring" }}
       >
         <Heading>Create Invoice</Heading>
         <form action="">
@@ -387,11 +389,12 @@ const InvoiceForm: React.FC<Props> = ({
                 autoComplete="off"
                 name="street"
                 id="address"
-                value={`hghghh`}
+                value={formData.senderAddress.street}
                 type="text"
                 required={true}
                 spellcheck={false}
-                handleInputChange={() => {}}
+                handleInputChange={(e) => setSenderAddress(e)}
+                showError={emptyFields.senderAddress.street}
               />
             </ContentContainer>
             <div className="align1">
@@ -404,8 +407,9 @@ const InvoiceForm: React.FC<Props> = ({
                   required={true}
                   spellcheck={false}
                   type="text"
-                  value={`kjjj`}
-                  handleInputChange={() => {}}
+                  value={formData.senderAddress.city}
+                  handleInputChange={(e) => setSenderAddress(e)}
+                  showError={emptyFields.senderAddress.city}
                 />
                 <FormInputs
                   autoComplete="off"
@@ -415,8 +419,9 @@ const InvoiceForm: React.FC<Props> = ({
                   required={true}
                   spellcheck={false}
                   type="number"
-                  value={`kjjj`}
-                  handleInputChange={() => {}}
+                  value={formData.senderAddress.postCode}
+                  handleInputChange={(e) => setSenderAddress(e)}
+                  showError={emptyFields.senderAddress.postCode}
                 />
               </ContentContainer>
               <ContentContainer>
@@ -428,8 +433,9 @@ const InvoiceForm: React.FC<Props> = ({
                   required={true}
                   spellcheck={false}
                   type="text"
-                  value={`kjjj`}
-                  handleInputChange={() => {}}
+                  value={formData.senderAddress.country}
+                  handleInputChange={(e) => setSenderAddress(e)}
+                  showError={emptyFields.senderAddress.country}
                 />
               </ContentContainer>
             </div>
@@ -445,8 +451,9 @@ const InvoiceForm: React.FC<Props> = ({
                 required={true}
                 spellcheck={false}
                 type="text"
-                value={`kjjj`}
-                handleInputChange={() => {}}
+                value={formData.clientName}
+                handleInputChange={(e) => handleInputChange(e)}
+                showError={emptyFields.clientName}
               />
             </ContentContainer>
             <ContentContainer>
@@ -458,9 +465,10 @@ const InvoiceForm: React.FC<Props> = ({
                 required={true}
                 spellcheck={false}
                 type="text"
-                value={`kjjj`}
-                handleInputChange={() => {}}
+                value={formData.clientEmail}
+                handleInputChange={(e) => handleInputChange(e)}
                 placeholder="example@email.com"
+                showError={emptyFields.clientEmail || showClientEmailError}
               />
             </ContentContainer>
             <ContentContainer>
@@ -472,8 +480,9 @@ const InvoiceForm: React.FC<Props> = ({
                 required={true}
                 spellcheck={false}
                 type="text"
-                value={`kjjj`}
-                handleInputChange={() => {}}
+                value={formData.clientAddress.street}
+                handleInputChange={(e) => setClientAddress(e)}
+                showError={emptyFields.clientAddress.street}
               />
             </ContentContainer>
             <ContentContainer className="gridAlign">
@@ -486,8 +495,9 @@ const InvoiceForm: React.FC<Props> = ({
                   required={true}
                   spellcheck={false}
                   type="text"
-                  value={`kjjj`}
-                  handleInputChange={() => {}}
+                  value={formData.clientAddress.city}
+                  handleInputChange={(e) => setClientAddress(e)}
+                  showError={emptyFields.clientAddress.city}
                 />
                 <FormInputs
                   autoComplete="off"
@@ -497,8 +507,9 @@ const InvoiceForm: React.FC<Props> = ({
                   required={true}
                   spellcheck={false}
                   type="number"
-                  value={`kjjj`}
-                  handleInputChange={() => {}}
+                  value={formData.clientAddress.postCode}
+                  handleInputChange={(e) => setClientAddress(e)}
+                  showError={emptyFields.clientAddress.postCode}
                 />
               </div>
               <FormInputs
@@ -509,8 +520,9 @@ const InvoiceForm: React.FC<Props> = ({
                 required={true}
                 spellcheck={false}
                 type="text"
-                value={`kjjj`}
-                handleInputChange={() => {}}
+                value={formData.clientAddress.country}
+                handleInputChange={(e) => setClientAddress(e)}
+                showError={emptyFields.clientAddress.country}
               />
             </ContentContainer>
             <ContentContainer className="gridAlign2">
@@ -603,8 +615,8 @@ const InvoiceForm: React.FC<Props> = ({
                 required={true}
                 spellcheck={false}
                 type="text"
-                value={`kjjj`}
-                handleInputChange={() => {}}
+                value={formData.description}
+                handleInputChange={(e) => handleInputChange(e)}
               />
             </ContentContainer>
           </BillToFieldset>
@@ -626,7 +638,7 @@ const InvoiceForm: React.FC<Props> = ({
                             spellcheck={false}
                             type="text"
                             value={item.name}
-                            handleInputChange={() => {}}
+                            handleInputChange={(e) => setItem(e, index)}
                           />
                         </div>
                         <div className="grid2">
@@ -638,8 +650,8 @@ const InvoiceForm: React.FC<Props> = ({
                             required={true}
                             spellcheck={false}
                             type="number"
-                            value={item.name}
-                            handleInputChange={() => {}}
+                            value={item.quantity.toString()}
+                            handleInputChange={(e) => setItem(e, index)}
                             min="1"
                           />
                         </div>
@@ -652,14 +664,14 @@ const InvoiceForm: React.FC<Props> = ({
                             required={true}
                             spellcheck={false}
                             type="number"
-                            value={item.name}
-                            handleInputChange={() => {}}
+                            value={item.price.toString()}
+                            handleInputChange={(e) => setItem(e, index)}
                           />
                         </div>
                         <div className="grid4">
                           <Total>
                             <h3>Total</h3>
-                            <p>{(+item.quantity * +item.price).toFixed(2)}</p>
+                            <p>$ {(+item.quantity * +item.price).toFixed(2)}</p>
                           </Total>
                         </div>
                         <div className="grid5">
@@ -684,36 +696,114 @@ const InvoiceForm: React.FC<Props> = ({
             </AddListContainer>
           </ItemList>
         </form>
-        <InvoiceButtons>
-          <Button type="button" className="discard">
-            Discard
-          </Button>
-          <Button type="button" className="draft">
-            Draft
-          </Button>
-          <Button type="button" className="send">
-            Save & Send
-          </Button>
-        </InvoiceButtons>
+        <ErrorMessageContainer>
+          {fieldIsEmpty && (
+            <InputErrorMessage>- All field must be completed</InputErrorMessage>
+          )}
+          {showClientEmailError && (
+            <InputErrorMessage>
+              - Invalid client email address
+            </InputErrorMessage>
+          )}
+          {noItem && (
+            <InputErrorMessage>
+              {" "}
+              - At least 1 Item must be added
+            </InputErrorMessage>
+          )}
+        </ErrorMessageContainer>
+
+        {!invoiceFormData ? (
+          <InvoiceButtons>
+            <div className="left">
+              <button
+                type="button"
+                className="discard"
+                onClick={() => closeForm()}
+              >
+                Discard
+              </button>
+            </div>
+            <div className="right">
+              <button
+                type="button"
+                className="draft"
+                onClick={(e) => handleSubmit(e, "draft")}
+              >
+                Draft
+              </button>
+              <button
+                type="button"
+                className="send"
+                onClick={(e) => handleSubmit(e, "create")}
+              >
+                Save & Send
+              </button>
+            </div>
+          </InvoiceButtons>
+        ) : (
+          <InvoiceButtons>
+            <div className="left">
+              <button
+                type="button"
+                className="discard"
+                onClick={() => closeForm()}
+              >
+                Discard
+              </button>
+            </div>
+            <div className="right">
+              {invoiceFormData?.status && invoiceFormData?.status === "draft" && (
+                <button
+                  type="button"
+                  className="draft"
+                  onClick={(e) => handleSubmit(e, "editDraft")}
+                >
+                  Save Draft
+                </button>
+              )}
+              <button
+                type="button"
+                className="send"
+                onClick={(e) => handleSubmit(e, "edit")}
+              >
+                Save & Send
+              </button>
+            </div>
+          </InvoiceButtons>
+        )}
       </FormContainer>
     </OverLay>
   );
 };
 export default InvoiceForm;
 
+const ErrorMessageContainer = styled.div``;
 const InvoiceButtons = styled.div`
   display: flex;
+  justify-content: space-between;
   width: 100%;
   gap: 1rem;
   font-size: 1rem;
   margin-top: 1rem;
 
+  button {
+    font-family: "Spartan", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    transition: background 0.3s linear;
+    cursor: pointer;
+    padding: 0.55rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.856rem;
+  }
+
   .discard {
     background-color: ${({ theme }) => theme.color.btn.secondary.bg};
-    border-radius: 15rem;
-    font-size: 0.856rem;
     color: ${({ theme }) => theme.color.text.bodyA};
-
+    padding: 1rem;
     &:hover {
       background-color: ${({ theme }) => theme.color.btn.secondary.hover};
     }
@@ -721,8 +811,6 @@ const InvoiceButtons = styled.div`
 
   .draft {
     margin-left: auto;
-    border-radius: 15rem;
-    font-size: 0.856rem;
     color: #fafafa;
     background-color: ${({ theme }) => theme.color.btn.tertiary.bg};
     padding-block: 1.1rem;
@@ -733,15 +821,19 @@ const InvoiceButtons = styled.div`
   }
 
   .send {
-    margin-right: 1rem;
-    border-radius: 15rem;
-    font-size: 0.856rem;
+    margin-right: 0.5rem;
     color: #fafafa;
     background: #7c5dfa;
+    transition: background 0.25s ease-in;
 
     &:hover {
-      background-color: ${({ theme }) => theme.color.btn.quaternary.hover};
+      background: #513aad;
     }
+  }
+
+  .right{
+    display: flex;
+    gap: 1rem;
   }
 `;
 const DeleteButton = styled.button`
@@ -836,7 +928,7 @@ const FormContainer = styled.section`
   padding: 2.4rem 2.4rem 3.2rem;
 
   @media screen and (min-width: 768px) {
-    height: 100vh;
+    height: calc(100vh - 4rem);
     right: 5rem;
     border-top-right-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;

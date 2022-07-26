@@ -1,36 +1,112 @@
-import { useEffect } from "react";
+
+import {  motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
-import InvoiceForm from "../components/InvoiceForm";
+import InvoiceListCard from "../components/InvoiceListCard";
+import LoadingSpinner from "../components/LoadingSpinner";
+import NoInvoice from "../components/NoInvoice";
+import Searchbar from "../components/Searchbar";
 import useMyContext from "../hooks/useContext";
-import { Invoice as InvoicesExtended, Invoice } from "../Types/invoice";
+import {
+  Invoice as InvoicesExtended,
+  Invoice,
+  CheckedStatus,
+} from "../Types/invoice";
 
 interface Props {
   invoices: Invoice[];
-  invoiceFormData: InvoicesExtended | null
+  
 }
 
-const Invoices: React.FC<Props> = ({ invoices, invoiceFormData }) => {
-  const { showForm, setShowForm } = useMyContext();
+const Invoices: React.FC<Props> = ({
+  invoices,
+  
+  
+}) => {
+  const animation = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const {  setShowForm } = useMyContext();
+  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
+  const [startAnimation, setStartAnimation] = useState(true);
+  const [searchedValue, setSearchedValue] = useState("");
+  const [filteredInvoiceStatus, setFilteredInvoiceStatus] = useState<
+    Invoice[] | null
+  >(null);
+
+  // Reset the history state so the correct animation can trigger on every refresh
+  useEffect(() => {
+    window.history.replaceState({}, "");
+    setFilteredInvoices(invoices);
+
+    setTimeout(() => setStartAnimation(false), 1500);
+  }, [invoices]);
+
+  const filteredByStatus = (checkboxesStatus: CheckedStatus[]) => {
+    const isFilterApplied = checkboxesStatus.some(
+      (checkbox) => checkbox.checked
+    );
+
+    if (isFilterApplied) {
+      const newArray: any = invoices.filter((invoice) =>
+        checkboxesStatus.find(
+          (chkboxStatus) =>
+            chkboxStatus.checked && invoice.status === chkboxStatus.name
+        )
+      );
+      setFilteredInvoiceStatus(newArray);
+      return setFilteredInvoices(newArray);
+    }
+    setFilteredInvoiceStatus(invoices);
+    return setFilteredInvoices(invoices);
+  };
+
+  useEffect(() => {
+    const inv = filteredInvoiceStatus?.length
+      ? filteredInvoiceStatus
+      : invoices;
+
+    const newInvoices = inv.filter((invoice: InvoicesExtended) =>
+      invoice.clientName
+        .toLowerCase()
+        .includes(searchedValue.toLowerCase().trim())
+    );
+
+    searchedValue === ""
+      ? setFilteredInvoices(
+          filteredInvoiceStatus?.length ? filteredInvoiceStatus : invoices
+        )
+      : setFilteredInvoices(newInvoices);
+  }, [invoices, filteredInvoiceStatus, searchedValue]);
+
   return (
     <InvoicesPage>
-      {showForm && (
-        <InvoiceForm
-          invoices={invoices}
-          invoiceFormData={invoiceFormData}
-          // newInvoice={(data: Invoice) => newInvoice(data)}
-          // editInvoice={(data: Invoice) => editInvoice(data)}
-        />
-      )}
       <Container>
         <Header>
           <h1>
-            Invoices <span>There are 7 total invoices</span>
+            Invoices
+            <span>
+              {invoices.length >= 1 &&
+                `There ${invoices.length <= 1 ? "is" : "are"} ${
+                  invoices.length
+                } invoice(s) in total`}
+            </span>
           </h1>
 
           <DropDownContainer>
-            <Dropdown />
+            <Dropdown
+              filterByStatus={(checkboxesStatus) =>
+                filteredByStatus(checkboxesStatus)
+              }
+            />
           </DropDownContainer>
           <ButtonContainer>
             <Button
@@ -45,10 +121,29 @@ const Invoices: React.FC<Props> = ({ invoices, invoiceFormData }) => {
             />
           </ButtonContainer>
         </Header>
-        {!invoices ? (
-          <div>You have no invoice</div>
+        {invoices.length < 1 && !searchedValue ? (
+          startAnimation ? (
+            <LoadingSpinner />
+          ) : (
+            <NoInvoice />
+          )
+        ) : startAnimation ? (
+          <LoadingSpinner />
         ) : (
-          <InvoiceList>{/* add search bar here  */}</InvoiceList>
+          <InvoiceList
+            as={motion.div}
+            variants={animation}
+            initial="hidden"
+            animate="visible"
+          >
+            <Searchbar
+              searchedValue={searchedValue}
+              setSearchedValue={(value: string) => setSearchedValue(value)}
+            />
+            {filteredInvoices.map((invoice, index) => (
+              <InvoiceListCard key={index} invoice={invoice} index={index} />
+            ))}
+          </InvoiceList>
         )}
       </Container>
     </InvoicesPage>
@@ -71,6 +166,7 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 2.25rem;
 
   h1 {
     font-size: 1.2rem;

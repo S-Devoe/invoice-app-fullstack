@@ -1,9 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { CheckedStatus } from "../Types/invoice";
 
-const Dropdown: any = () => {
+interface Props {
+  filterByStatus: (checkboxesStatus: CheckedStatus[]) => void;
+}
+
+const Dropdown: React.FC<Props> = ({ filterByStatus }) => {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([
+  const [options, setOptions] = useState<CheckedStatus[]>([
     {
       id: 1,
       text: "Paid",
@@ -24,6 +29,17 @@ const Dropdown: any = () => {
     },
   ]);
 
+  const changeCheckboxStatus = (id: number) => {
+    const checkbox = options.find((option) => option.id === id);
+
+    if (!checkbox) throw new Error("Undefined checkbox");
+
+    checkbox.checked = !checkbox.checked;
+
+    setOptions([...options]);
+    filterByStatus(options);
+  };
+
   return (
     <DropDownContainer open={open}>
       <Head>
@@ -37,7 +53,10 @@ const Dropdown: any = () => {
         {open && (
           <DropDownContent>
             {options.map((option) => (
-              <Label key={option.id}>
+              <Label
+                key={option.id}
+                onClick={() => changeCheckboxStatus(option.id)}
+              >
                 <CustomCheckbox selected={option.checked}>
                   <img
                     src="/images/icon-check.svg"
@@ -77,13 +96,12 @@ const Heading = styled.div`
     }
 
     @media screen and (min-width: 1000px) {
-      font-size: .95em;
+      font-size: 0.95em;
     }
   }
 `;
 
-const Head = styled.div`
-`;
+const Head = styled.div``;
 
 const DropDownContainer = styled.div<OpenProp>`
   cursor: pointer;
@@ -118,6 +136,12 @@ const CustomCheckbox = styled.span<CheckboxProp>`
   width: 1rem;
   background: ${({ selected, theme }) =>
     selected ? "#7C5DFA" : theme.color.checkbox.bg};
+
+    img{
+      margin-top: -0.15rem;
+    
+    }
+    
 `;
 
 const Label = styled.label`
@@ -133,6 +157,8 @@ const Label = styled.label`
   span {
     padding-top: 0.25rem;
   }
+
+  
 
   &:hover {
     ${CustomCheckbox} {

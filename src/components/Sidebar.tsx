@@ -5,27 +5,24 @@ import Avatar from "../assets/AssetComponents/Avatar";
 import { auth } from "../firebase/config";
 import Button from "./Button";
 import useMyContext from "../hooks/useContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import useAuthContext from "../hooks/AuthContext";
-
 
 export interface themeMode {
   toggleTheme: () => void;
 }
 
 const Sidebar = ({ toggleTheme }: themeMode) => {
-  const { setShowLogoutModal } = useMyContext();
-  const {currentUser} = useAuthContext()
-  const [loggedIn, setLoggedIn] = useState(false);
+  const { setShowLogoutModal, setLoggedIn } = useMyContext();
+  const { currentUser } = useAuthContext();
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) setLoggedIn(true);
     });
-  }, []);
+  }, [setLoggedIn]);
 
-  
   return (
     <SidebarContainer>
       {/* Logo  */}
@@ -57,7 +54,7 @@ export default Sidebar;
 const SidebarContainer = styled.aside`
   position: sticky;
   top: 0;
-  z-index: 25;
+  z-index: 99999;
   background: ${(props) => props.theme.color.sidebar.bg};
   transition: background 0.3s;
   display: flex;
