@@ -66,11 +66,11 @@ function App() {
     onAuthStateChanged(auth, (currentUser) => {
       // console.log(auth);
       if (currentUser?.isAnonymous) {
-        setLoggedIn(true)
+        setLoggedIn(true);
         setAnonymousUser(true);
       } else {
         setAnonymousUser(false);
-        setLoggedIn(false)
+        setLoggedIn(false);
       }
       //currentUser here is from firebase not fom the context
       if (currentUser) {
@@ -195,6 +195,17 @@ function App() {
       setShowForm(false);
     }
   };
+
+  // this (code below) stops the invoice form  from scrolling off the page whenever there is a lot of invoice
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = "hidden";
+
+      window.scrollTo(0, 0); //this scrolls to top of page
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showForm]);
 
   return (
     <AppContainer>

@@ -1,5 +1,4 @@
-
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../components/Button";
@@ -17,14 +16,9 @@ import {
 
 interface Props {
   invoices: Invoice[];
-  
 }
 
-const Invoices: React.FC<Props> = ({
-  invoices,
-  
-  
-}) => {
+const Invoices: React.FC<Props> = ({ invoices }) => {
   const animation = {
     hidden: {},
     visible: {
@@ -34,7 +28,7 @@ const Invoices: React.FC<Props> = ({
     },
   };
 
-  const {  setShowForm } = useMyContext();
+  const { setShowForm, showForm } = useMyContext();
   const [filteredInvoices, setFilteredInvoices] = useState(invoices);
   const [startAnimation, setStartAnimation] = useState(true);
   const [searchedValue, setSearchedValue] = useState("");
@@ -87,6 +81,12 @@ const Invoices: React.FC<Props> = ({
       : setFilteredInvoices(newInvoices);
   }, [invoices, filteredInvoiceStatus, searchedValue]);
 
+  const handleInvoiceForm = () => {
+    setShowForm(true);
+  };
+
+ 
+
   return (
     <InvoicesPage>
       <Container>
@@ -111,7 +111,7 @@ const Invoices: React.FC<Props> = ({
           <ButtonContainer>
             <Button
               className="new-invoice"
-              onClick={() => setShowForm((prev: any) => !prev)}
+              onClick={() => handleInvoiceForm()}
               icon={<img src="/images/icon-plus.svg" alt="add invoice" />}
               children={
                 <p>

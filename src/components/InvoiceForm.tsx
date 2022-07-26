@@ -11,6 +11,7 @@ import useMyContext from "../hooks/useContext";
 import CalendarComp from "./CalendarComp";
 import { AnimatePresence, motion } from "framer-motion";
 import InputErrorMessage from "./InputErrorMessage";
+import { MdDelete } from "react-icons/md";
 
 interface Props {
   invoices: Invoice[];
@@ -679,7 +680,10 @@ const InvoiceForm: React.FC<Props> = ({
                             type="button"
                             onClick={() => removeItem(index)}
                           >
-                            <img src="./images/icon-delete.svg" alt="delete" />
+                            {/* <img src="./images/icon-delete.svg" alt="delete" /> */}
+                            <span>
+                              <MdDelete />
+                            </span>
                           </DeleteButton>
                         </div>
                       </ItemGrid>
@@ -831,7 +835,7 @@ const InvoiceButtons = styled.div`
     }
   }
 
-  .right{
+  .right {
     display: flex;
     gap: 1rem;
   }
@@ -840,6 +844,11 @@ const DeleteButton = styled.button`
   background: none;
   outline: none;
   border: none;
+
+  span {
+    color: #888eb0;
+    font-size: 1rem;
+  }
 `;
 const Total = styled.div`
   font-size: 0.85rem;
