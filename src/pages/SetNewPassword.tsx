@@ -2,57 +2,67 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import AuthenticationContainer from "../components/AuthenticationContainer";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { confirmPasswordReset, sendPasswordResetEmail } from "firebase/auth";
 import Button from "../components/Button";
 import FormInputs from "../components/FormInputs";
 import FormTitle from "../components/FormTitle";
 import { auth } from "../firebase/config";
 import InputErrorMessage from "../components/InputErrorMessage";
 
-const PasswordReset = () => {
+const SetNewPassword = (props: any) => {
+  const location = useLocation();
+  //   console.log(location.search);
+
   const [error, setError] = useState("");
   const [succesMessage, setSuccessMessage] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
+  const [newPassword, setNewPassword] = useState({
+    password: "",
+    confirmPassword: "",
+  });
 
   const handleInputChange = (e: any) => {
-    const { value } = e.target;
+    const { name, value } = e.target;
 
-    setResetEmail(value);
+    setNewPassword({ ...newPassword, [name]: value });
   };
 
-  const location = useLocation();
-
-  console.log(location.search);
-
-  console.log(resetEmail);
-
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
+    const queryParams = new URLSearchParams(location.search);
 
-    await sendPasswordResetEmail(auth, resetEmail)
-      .then(() => {
-        console.log("success");
-        setSuccessMessage(
-          "A reset link has just been sent to your email address (check your spam if you can't find the link)"
-        );
-        // Password reset email sent!
-        // ..
-      })
-      .catch(({ code }) => {
-        console.log(code);
-        switch (code) {
-          case "auth/invalid-email":
-            setError("Please enter a valid email address");
-            break;
-          case "auth/user-not-found":
-            setError("No account matches this email address");
-            break;
-          case "auth/too-many-requests":
-            setError("Too many requests, try again in a few minute");
-            break;
-          default:
-        }
-      });
+    const oobCode: any = queryParams.get("oobCode");
+
+    if (newPassword.password !== newPassword.confirmPassword) {
+      return handleError();
+    } else
+      confirmPasswordReset(auth, oobCode, newPassword.password)
+        .then(() => {
+          console.log("success");
+          setSuccessMessage("Password changed successfully, go to login page")
+
+          // Password reset email sent!
+          // ..
+        })
+        .catch(({ code }) => {
+          switch (code) {
+            case "auth/expired-action-code":
+              setError("Link as expired, go back to reset password");
+              break;
+            case "auth/invalid-action-code":
+              setError("Error!, try again later");
+              break;
+            case "auth/weak-password":
+              setError("Password should be at least 6 characters");
+              break;
+            default:
+          }
+        });
+  };
+
+  const handleError = () => {
+    if (newPassword.password !== newPassword.confirmPassword) {
+      setError("Password does not match");
+    }
   };
 
   return (
@@ -62,22 +72,39 @@ const PasswordReset = () => {
           <form onSubmit={handleSubmit}>
             <FormTitle title="Reset Password" />
             <FormInputs
-              label="Enter amail address"
-              id="email"
-              name="email"
-              value={resetEmail}
+              label="New Password"
+              id="password"
+              name="password"
+              value={newPassword.password}
               spellcheck={true}
-              autoComplete="email"
               required={true}
-              placeholder="john.doe@gmail.com"
-              type="email"
+              placeholder="Enter Password"
+              type="password"
               handleInputChange={(e) => handleInputChange(e)}
+              displayEye={true}
+            />
+
+            <FormInputs
+              label="Confirm Password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={newPassword.confirmPassword}
+              spellcheck={true}
+              required={true}
+              placeholder="Confirm Password"
+              type="password"
+              handleInputChange={(e) => handleInputChange(e)}
+              displayEye={true}
             />
 
             {error && <InputErrorMessage children={error} />}
             {succesMessage && <InputErrorMessage className="success" children={succesMessage} />}
             <CenterButton>
-              <Button className="button-violet" children="Send" type="submit" />
+              <Button
+                className="button-violet"
+                children="Reset Password"
+                type="submit"
+              />
             </CenterButton>
           </form>
           <BackToLogin>
@@ -88,7 +115,7 @@ const PasswordReset = () => {
     </AuthenticationContainer>
   );
 };
-export default PasswordReset;
+export default SetNewPassword;
 
 const PasswordResetPage = styled.section`
   display: flex;

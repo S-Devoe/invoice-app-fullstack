@@ -14,4 +14,11 @@ const Message = styled.p`
   font-weight: 500;
   font-size: 0.75rem;
   margin-bottom: 1rem;
+
+
+  .success{
+    color: #20bd20;
+  }
 `;
+
+

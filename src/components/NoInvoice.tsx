@@ -23,6 +23,8 @@ const Container = styled.section`
   align-items: center;
   text-align: center;
   margin-top: 5rem;
+
+  color: ${(props) => props.theme.color.text.bodyA};
 `;
 
 const Image = styled.img`
@@ -33,6 +35,7 @@ const Paragraph = styled.p`
   line-height: 1rem;
   span {
     font-weight: bold;
+    color: ${(props) => props.theme.color.text.heading};
 
     .show {
       display: none;

@@ -29,6 +29,7 @@ import {
 import { Invoice as InvoicesExtended, InvoiceStatus } from "./Types/invoice";
 import useAuthContext from "./hooks/AuthContext";
 import InvoiceForm from "./components/InvoiceForm";
+import SetNewPassword from "./pages/SetNewPassword";
 
 function App() {
   const location = useLocation();
@@ -273,6 +274,8 @@ function App() {
               />
             }
           />
+          <Route path="/set-new-password" element={<SetNewPassword />}
+           />
           <Route
             path="*"
             element={
