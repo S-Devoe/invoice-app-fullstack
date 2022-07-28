@@ -996,6 +996,7 @@ const FormContainer = styled.section`
   }
 `;
 const Heading = styled.h2`
+  color: ${(props) => props.theme.color.text.heading};
   font-size: 1.5rem;
 `;
 
