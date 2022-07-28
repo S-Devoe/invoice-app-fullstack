@@ -52,7 +52,7 @@ function App() {
     const getInvoiceFunction = async () => {
       if (anonymousUser) return setInvoices(data as InvoicesExtended[]);
 
-      if (loggedIn) {
+      if (currentUser) {
         if (auth?.currentUser?.email) {
           // console.log(auth.currentUser.email);
           const storeInvoices: any = await getInvoices(auth.currentUser?.email);
@@ -61,7 +61,7 @@ function App() {
       }
     };
     getInvoiceFunction();
-  }, [loggedIn, anonymousUser]);
+  }, [currentUser, anonymousUser]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
