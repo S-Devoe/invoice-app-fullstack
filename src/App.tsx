@@ -274,8 +274,12 @@ function App() {
               />
             }
           />
-          <Route path="/set-new-password" element={<SetNewPassword />}
-           />
+          <Route
+            path="/set-new-password"
+            element={
+              currentUser ? <Navigate to="/invoices" /> : <SetNewPassword />
+            }
+          />
           <Route
             path="*"
             element={

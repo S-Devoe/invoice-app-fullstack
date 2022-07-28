@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AuthenticationContainer from "../components/AuthenticationContainer";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -19,10 +19,6 @@ const PasswordReset = () => {
 
     setResetEmail(value);
   };
-
-  const location = useLocation();
-
-  console.log(location.search);
 
   console.log(resetEmail);
 
@@ -75,7 +71,9 @@ const PasswordReset = () => {
             />
 
             {error && <InputErrorMessage children={error} />}
-            {succesMessage && <InputErrorMessage className="success" children={succesMessage} />}
+            {succesMessage && (
+              <InputErrorMessage className="success" children={succesMessage} />
+            )}
             <CenterButton>
               <Button className="button-violet" children="Send" type="submit" />
             </CenterButton>
