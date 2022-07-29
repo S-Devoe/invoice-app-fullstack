@@ -6,7 +6,6 @@ interface Props {
 }
 
 const InvoiceStatusBadge: React.FC<Props> = ({ className, status }) => {
-  console.log(status);
   const getStatus = (): string => {
     switch (status) {
       case "draft":

@@ -6,12 +6,16 @@ const NoInvoice = () => {
       <Image src="/images/illustration-empty.svg" alt="" />
       <Heading>There is nothing here.</Heading>
       <Paragraph>
-        Create an invoice by clicking the{" "}
+        New user? Create an invoice by clicking the{" "}
         <span>
           New <span className="show"> Invoice </span>
         </span>
         button and get started.
       </Paragraph>
+
+      <Paragraph2>
+        If you recently changed your password, kindly logout and login again.
+      </Paragraph2>
     </Container>
   );
 };
@@ -44,6 +48,12 @@ const Paragraph = styled.p`
       }
     }
   }
+`;
+
+const Paragraph2 = styled(Paragraph)`
+  margin-top: 4rem;
+  font-size: 0.65rem;
+  color: ${(props) => props.theme.color.text.bodyB};
 `;
 const Heading = styled.h2`
   margin-bottom: 1.5rem;

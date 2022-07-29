@@ -1,17 +1,12 @@
-import { signOut } from "firebase/auth";
-import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 import styled from "styled-components";
-import ConfirmModal from "../../components/ConfirmModal";
-import { auth } from "../../firebase/config";
-import useMyContext from "../../hooks/useContext";
 
 const Avatar = () => {
-  
-
   return (
     <AvatarContainer>
-      <Icon src="./images/image-avatar.jpg" alt="avatar" />
+      <Icon>
+        <FaUserCircle />
+      </Icon>
     </AvatarContainer>
   );
 };
@@ -29,10 +24,17 @@ const AvatarContainer = styled.div`
   }
 `;
 
-const Icon = styled.img`
-  height: 2.5rem;
-  width: 2.5rem;
-  border-radius: 50%;
+const Icon = styled.div`
+  font-size: 2rem;
+  color: #888eb0;
+
+  &:hover::after,
+  :focus::after {
+    content: "Logout";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 1rem;
+  }
 `;
-
-

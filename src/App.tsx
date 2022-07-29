@@ -76,10 +76,8 @@ function App() {
       //currentUser here is from firebase not fom the context
       if (currentUser) {
         // console.log(auth.currentUser);
-        setLoggedIn(true);
-      } else {
-        setLoggedIn(false);
-      }
+        // setLoggedIn(true);
+      } 
     });
   }, [invoices, setLoggedIn]);
 

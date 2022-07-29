@@ -793,7 +793,7 @@ const InvoiceButtons = styled.div`
   width: 100%;
   gap: 1rem;
   font-size: 1rem;
-  padding: 1rem 1.2rem;
+  padding: 1rem 1.2rem 5rem;
 
   button {
     font-family: "Spartan", sans-serif;
@@ -850,6 +850,7 @@ const InvoiceButtons = styled.div`
   @media screen and (min-width: 768px) {
     flex-direction: row;
     justify-content: space-between;
+    padding: 1rem 1.2rem 1.5rem;
 
     .discard {
       width: unset;

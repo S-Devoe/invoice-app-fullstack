@@ -38,7 +38,7 @@ const Sidebar = ({ toggleTheme }: themeMode) => {
         <Divider />
 
         {/* profile image  */}
-        {loggedIn   && (
+        {(loggedIn || currentUser) && (
           <Button
             className="remove-bg"
             onClick={() => setShowLogoutModal(true)}
@@ -69,6 +69,7 @@ const SidebarContainer = styled.aside`
   }
   .remove-bg {
     background: transparent;
+    padding: .5rem;
   }
 
   @media screen and (min-width: 1000px) {

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { createContext, useContext, useReducer } from "react";
+import { auth } from "../firebase/config";
 
 import AuthReducer from "./AuthReducer";
 interface Props {
@@ -7,25 +8,27 @@ interface Props {
   dispatch?: any;
 }
 
-
-
-// const store: any = localStorage.getItem("user");
-
-// const initialState = {
-//   currentUser: JSON.parse(store) || null,
-// };
+const store: any = localStorage.getItem("user");
 
 const initialState = {
-  currentUser: null,
+  currentUser: JSON.parse(store) || null,
 };
+
+
+
+
+
 
 export const AuthContext = createContext<Props>(initialState);
 
 export const AuthContextProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(AuthReducer, initialState);
+
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(state.currentUser));
   }, [state.currentUser]);
+  // console.log(state.currentUser);
+
 
   return (
     <AuthContext.Provider

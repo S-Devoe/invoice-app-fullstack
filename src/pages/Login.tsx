@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   browserLocalPersistence,
   setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
@@ -46,6 +47,7 @@ const Login = () => {
             formInput.password
           ).then((userCredential) => {
             const user = userCredential;
+            console.log(user)
             setLoggedIn(true);
             // console.log(user);
             dispatch({
