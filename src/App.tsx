@@ -200,7 +200,7 @@ function App() {
   // this (code below) stops the invoice form  from scrolling off the page whenever there is a lot of invoice
   useEffect(() => {
     if (showForm) {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "hidden";
 
       window.scrollTo(0, 0); //this scrolls to top of page
     } else {

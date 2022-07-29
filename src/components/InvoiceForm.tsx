@@ -28,7 +28,7 @@ const InvoiceForm: React.FC<Props> = ({
   invoiceFormData,
   setInvoiceFormData,
 }) => {
-  const { showForm, setShowForm } = useMyContext();
+  const { setShowForm } = useMyContext();
   const paymentTermsValues = [1, 7, 14, 30];
 
   const [showCalendar, setShowCalendar] = useState(false);
@@ -379,7 +379,6 @@ const InvoiceForm: React.FC<Props> = ({
         animate={{ x: "0", opacity: 1 }}
         exit={{ x: "-100%", opacity: 0 }}
         transition={{ duration: 0.65, type: "spring" }}
-        style={{ overflow: "hidden" }}
       >
         <Heading>Create Invoice</Heading>
         <form action="">
@@ -784,7 +783,15 @@ const InvoiceForm: React.FC<Props> = ({
 export default InvoiceForm;
 
 const ErrorMessageContainer = styled.div``;
+
+
+
 const InvoiceButtons = styled.div`
+
+
+
+
+
   display: flex;
   justify-content: space-between;
   position: absolute;
@@ -845,6 +852,7 @@ const InvoiceButtons = styled.div`
     display: flex;
     gap: 1rem;
   }
+  
 `;
 const DeleteButton = styled.button`
   background: none;
@@ -943,6 +951,7 @@ const FormContainer = styled.section`
   top: 4.5rem;
   bottom: 0;
   padding: 2.4rem 2.4rem 3.2rem;
+  overflow: scroll;
 
   @media screen and (min-width: 768px) {
     height: calc(100vh - 4rem);
