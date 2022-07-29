@@ -784,25 +784,16 @@ export default InvoiceForm;
 
 const ErrorMessageContainer = styled.div``;
 
-
-
 const InvoiceButtons = styled.div`
-
-
-
-
-
   display: flex;
-  justify-content: space-between;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  margin-bottom: -4rem;
+  margin-top: 2rem;
   width: 100%;
   gap: 1rem;
   font-size: 1rem;
   padding: 1rem 1.2rem;
-  box-shadow: 2px -25px 133px -3px rgba(0 0 0 / 10%);
 
   button {
     font-family: "Spartan", sans-serif;
@@ -818,6 +809,7 @@ const InvoiceButtons = styled.div`
   }
 
   .discard {
+    width: 100%;
     background-color: ${({ theme }) => theme.color.btn.secondary.bg};
     color: ${({ theme }) => theme.color.text.bodyA};
     padding: 1rem;
@@ -828,9 +820,10 @@ const InvoiceButtons = styled.div`
 
   .draft {
     margin-left: auto;
+    width: 100%;
     color: #fafafa;
     background-color: ${({ theme }) => theme.color.btn.tertiary.bg};
-    padding-block: 1.1rem;
+    padding-block: 1rem;
 
     &:hover {
       background-color: ${({ theme }) => theme.color.btn.tertiary.hover};
@@ -850,9 +843,31 @@ const InvoiceButtons = styled.div`
 
   .right {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
   }
-  
+
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+
+    .discard {
+      width: unset;
+    }
+
+    .draft {
+      width: unset;
+    }
+
+    .right {
+      flex-direction: row;
+      flex: 1;
+    }
+
+    .left {
+      flex: 1;
+    }
+  }
 `;
 const DeleteButton = styled.button`
   background: none;
@@ -952,6 +967,22 @@ const FormContainer = styled.section`
   bottom: 0;
   padding: 2.4rem 2.4rem 3.2rem;
   overflow: scroll;
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+
+    @media screen and (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.color.form.fieldBorder};
+    border-radius: 0.4rem;
+
+    @media screen and (min-width: 768px) {
+      display: none;
+    }
+  }
 
   @media screen and (min-width: 768px) {
     height: calc(100vh - 4rem);
@@ -1015,6 +1046,7 @@ const FormContainer = styled.section`
 const Heading = styled.h2`
   color: ${(props) => props.theme.color.text.heading};
   font-size: 1.5rem;
+  padding-bottom: 1rem;
 `;
 
 const BillByFieldset = styled.fieldset`
