@@ -790,6 +790,8 @@ const InvoiceButtons = styled.div`
   gap: 1rem;
   font-size: 1rem;
   margin-top: 1rem;
+  padding-bottom: 2rem;
+  box-shadow: 2px -34px 153px -3px rgba(211, 203, 203, 0.75);
 
   button {
     font-family: "Spartan", sans-serif;
@@ -932,12 +934,14 @@ const FormContainer = styled.section`
   background: ${(props) => props.theme.color.form.bg};
   position: absolute;
   height: calc(100vh - 4rem);
+  /* height: 100vh; */
   z-index: 10;
   top: 4.5rem;
+  bottom: 0;
   padding: 2.4rem 2.4rem 3.2rem;
 
   @media screen and (min-width: 768px) {
-    height: calc(100vh - 4rem);
+    height: calc(100% - 4rem);
     right: 5rem;
     border-top-right-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;

@@ -6,6 +6,7 @@ interface Props {
 }
 
 const InvoiceStatusBadge: React.FC<Props> = ({ className, status }) => {
+  console.log(status);
   const getStatus = (): string => {
     switch (status) {
       case "draft":
@@ -21,7 +22,7 @@ const InvoiceStatusBadge: React.FC<Props> = ({ className, status }) => {
   return (
     <Status className={className} status={status}>
       <BulletPoint status={status} />
-      {getStatus()}
+      <div className="color">{getStatus()}</div>
     </Status>
   );
 };
@@ -40,27 +41,16 @@ const Status = styled.div<BulletPointProp>`
   padding: 1rem 1rem;
   border-radius: 6px;
   text-align: center;
-
-  ${({ status }) =>
-    status === "paid" &&
-    css`
-      color: "#33d69f";
-      background: "#33d69f0f";
-    `}
-
-  ${({ status }) =>
-    status === "pending" &&
-    css`
-      color: #ff8f00;
-      background: #ff8f000f;
-    `}
-
-    ${({ status, theme }) =>
-    status === "draft" &&
-    css`
-      color: ${({ theme }) => theme.color.badge.draft};
-      background: ${({ theme }) => theme.color.badge.draftBg};
-    `}
+  color: ${({ status, theme }): any => {
+    if (status === "paid") return "#33d69f";
+    if (status === "pending") return "#ff8f00";
+    if (status === "draft") return theme.color.badge.draft;
+  }};
+  background: ${(props): any => {
+    if (props.status === "paid") return "#33d69f0f";
+    if (props.status === "pending") return "#ff8f000f";
+    if (props.status === "draft") return props.theme.color.badge.draftBg;
+  }};
 `;
 
 const BulletPoint = styled.span<BulletPointProp>`
