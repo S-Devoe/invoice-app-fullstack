@@ -786,12 +786,15 @@ const ErrorMessageContainer = styled.div``;
 const InvoiceButtons = styled.div`
   display: flex;
   justify-content: space-between;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
   width: 100%;
   gap: 1rem;
   font-size: 1rem;
-  margin-top: 1rem;
-  padding-bottom: 2rem;
-  box-shadow: 2px -34px 153px -3px rgba(211, 203, 203, 0.75);
+  padding: 1rem 1.2rem;
+  box-shadow: 2px -25px 133px -3px rgba(0 0 0 / 10%);
 
   button {
     font-family: "Spartan", sans-serif;
@@ -941,7 +944,7 @@ const FormContainer = styled.section`
   padding: 2.4rem 2.4rem 3.2rem;
 
   @media screen and (min-width: 768px) {
-    height: calc(100% - 4rem);
+    height: calc(100vh - 4rem);
     right: 5rem;
     border-top-right-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;
