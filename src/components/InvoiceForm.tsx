@@ -28,7 +28,7 @@ const InvoiceForm: React.FC<Props> = ({
   invoiceFormData,
   setInvoiceFormData,
 }) => {
-  const { setShowForm } = useMyContext();
+  const { showForm, setShowForm } = useMyContext();
   const paymentTermsValues = [1, 7, 14, 30];
 
   const [showCalendar, setShowCalendar] = useState(false);
@@ -379,6 +379,7 @@ const InvoiceForm: React.FC<Props> = ({
         animate={{ x: "0", opacity: 1 }}
         exit={{ x: "-100%", opacity: 0 }}
         transition={{ duration: 0.65, type: "spring" }}
+        style={{ overflow: "hidden" }}
       >
         <Heading>Create Invoice</Heading>
         <form action="">

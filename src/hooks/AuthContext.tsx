@@ -7,10 +7,16 @@ interface Props {
   dispatch?: any;
 }
 
-const store: any = localStorage.getItem("user");
+
+
+// const store: any = localStorage.getItem("user");
+
+// const initialState = {
+//   currentUser: JSON.parse(store) || null,
+// };
 
 const initialState = {
-  currentUser: JSON.parse(store) || null,
+  currentUser: null,
 };
 
 export const AuthContext = createContext<Props>(initialState);
