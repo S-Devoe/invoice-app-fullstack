@@ -32,9 +32,15 @@ const Icon = styled.div`
   :focus::after {
     content: "Logout";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    font-size: 1rem;
+    right: 7.5%;
+    bottom: 2%;
+    font-size: 0.85rem;
+
+    @media screen and (min-width: 768px) {
+      bottom: 1%;
+      left: 0;
+      right: 0;
+      font-size: 1rem;
+    }
   }
 `;

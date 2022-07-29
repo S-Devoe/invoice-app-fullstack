@@ -835,6 +835,7 @@ const InvoiceButtons = styled.div`
     color: #fafafa;
     background: #7c5dfa;
     transition: background 0.25s ease-in;
+    margin-bottom: 2rem;
 
     &:hover {
       background: #513aad;
@@ -854,6 +855,10 @@ const InvoiceButtons = styled.div`
 
     .discard {
       width: unset;
+    }
+
+    .send {
+      margin-bottom: unset;
     }
 
     .draft {
