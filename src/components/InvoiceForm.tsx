@@ -851,7 +851,7 @@ const InvoiceButtons = styled.div`
   @media screen and (min-width: 768px) {
     flex-direction: row;
     justify-content: space-between;
-    padding: 1rem 1.2rem 1.5rem;
+    padding: 1rem 1.2rem;
 
     .discard {
       width: unset;
@@ -1009,9 +1009,6 @@ const FormContainer = styled.section`
 
   form {
     padding: 1rem 0;
-    overflow: hidden;
-    height: 90%;
-    overflow-y: auto;
 
     fieldset {
       border: none;
@@ -1046,6 +1043,9 @@ const FormContainer = styled.section`
   @media screen and (min-width: 768px) {
     form {
       padding-right: 0.8rem;
+      overflow: hidden;
+      height: 85%;
+      overflow-y: auto;
     }
   }
 `;
